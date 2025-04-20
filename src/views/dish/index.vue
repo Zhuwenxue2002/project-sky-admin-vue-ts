@@ -3,44 +3,24 @@
     <div class="container">
       <div class="tableBar">
         <label style="margin-right: 10px">菜品名称：</label>
-        <el-input v-model="input"
-                  placeholder="请填写菜品名称"
-                  style="width: 14%"
-                  clearable
-                  @clear="init"
-                  @keyup.enter.native="initFun" />
+        <el-input v-model="input" placeholder="请填写菜品名称" style="width: 14%" clearable @clear="init"
+          @keyup.enter.native="initFun" />
 
         <label style="margin-right: 10px; margin-left: 20px">菜品分类：</label>
-        <el-select v-model="categoryId"
-                   style="width: 14%"
-                   placeholder="请选择"
-                   clearable
-                   @clear="init">
-          <el-option v-for="item in dishCategoryList"
-                     :key="item.value"
-                     :label="item.label"
-                     :value="item.value" />
+        <el-select v-model="categoryId" style="width: 14%" placeholder="请选择" clearable @clear="init">
+          <el-option v-for="item in dishCategoryList" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
 
         <label style="margin-right: 10px; margin-left: 20px">售卖状态：</label>
-        <el-select v-model="dishStatus"
-                   style="width: 14%"
-                   placeholder="请选择"
-                   clearable
-                   @clear="init">
-          <el-option v-for="item in saleStatus"
-                     :key="item.value"
-                     :label="item.label"
-                     :value="item.value" />
+        <el-select v-model="dishStatus" style="width: 14%" placeholder="请选择" clearable @clear="init">
+          <el-option v-for="item in saleStatus" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
-        <el-button class="normal-btn continue"
-                   @click="init(true)">
+        <el-button class="normal-btn continue" @click="init(true)">
           查询
         </el-button>
 
         <div class="tableLab">
-          <span class="delBut non"
-                @click="deleteHandle('批量', null)">批量删除</span>
+          <span class="delBut non" @click="deleteHandle('批量', null)">批量删除</span>
           <!-- <span class="blueBug non" @click="statusHandle('1')">批量启售</span>
           <span
             style="border: none"
@@ -48,91 +28,63 @@
             @click="statusHandle('0')"
             >批量停售</span
           > -->
-          <el-button type="primary"
-                     style="margin-left: 15px"
-                     @click="addDishtype('add')">
+          <el-button type="primary" style="margin-left: 15px" @click="addDishtype('add')">
             + 新建菜品
           </el-button>
         </div>
       </div>
-      <el-table v-if="tableData.length"
-                :data="tableData"
-                stripe
-                class="tableBox"
-                @selection-change="handleSelectionChange">
-        <el-table-column type="selection"
-                         width="25" />
-        <el-table-column prop="name"
-                         label="菜品名称" />
-        <el-table-column prop="image"
-                         label="图片">
+      <el-table v-if="tableData.length" :data="tableData" stripe class="tableBox"
+        @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="25" />
+        <el-table-column prop="name" label="菜品名称" />
+        <el-table-column prop="image" label="图片">
           <template slot-scope="{ row }">
-            <el-image style="width: 80px; height: 40px; border: none; cursor: pointer"
-                      :src="row.image">
-              <div slot="error"
-                   class="image-slot">
-                <img src="./../../assets/noImg.png"
-                     style="width: auto; height: 40px; border: none">
+            <el-image style="width: 80px; height: 40px; border: none; cursor: pointer" :src="row.image">
+              <div slot="error" class="image-slot">
+                <img src="./../../assets/noImg.png" style="width: auto; height: 40px; border: none">
               </div>
             </el-image>
           </template>
         </el-table-column>
-        <el-table-column prop="categoryName"
-                         label="菜品分类" />
+        <el-table-column prop="categoryName" label="菜品分类" />
         <el-table-column label="售价">
           <template slot-scope="scope">
-            <span style="margin-right: 10px">￥{{ (scope.row.price ).toFixed(2)*100/100 }}</span>
+            <span style="margin-right: 10px">￥{{ (scope.row.price).toFixed(2) * 100 / 100 }}</span>
           </template>
         </el-table-column>
         <el-table-column label="售卖状态">
           <template slot-scope="scope">
-            <div class="tableColumn-status"
-                 :class="{ 'stop-use': String(scope.row.status) === '0' }">
+            <div class="tableColumn-status" :class="{ 'stop-use': String(scope.row.status) === '0' }">
               {{ String(scope.row.status) === '0' ? '停售' : '启售' }}
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="updateTime"
-                         label="最后操作时间" />
-        <el-table-column label="操作"
-                         width="250"
-                         align="center">
+        <el-table-column prop="updateTime" label="最后操作时间">
           <template slot-scope="scope">
-            <el-button type="text"
-                       size="small"
-                       class="blueBug"
-                       @click="addDishtype(scope.row.id)">
+            {{ scope.row.updateTime | formatDate }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="250" align="center">
+          <template slot-scope="scope">
+            <el-button type="text" size="small" class="blueBug" @click="addDishtype(scope.row.id)">
               修改
             </el-button>
-            <el-button type="text"
-                       size="small"
-                       class="delBut"
-                       @click="deleteHandle('单删', scope.row.id)">
+            <el-button type="text" size="small" class="delBut" @click="deleteHandle('单删', scope.row.id)">
               删除
             </el-button>
-            <el-button type="text"
-                       size="small"
-                       class="non"
-                       :class="{
-                         blueBug: scope.row.status == '0',
-                         delBut: scope.row.status != '0'
-                       }"
-                       @click="statusHandle(scope.row)">
+            <el-button type="text" size="small" class="non" :class="{
+              blueBug: scope.row.status == '0',
+              delBut: scope.row.status != '0'
+            }" @click="statusHandle(scope.row)">
               {{ scope.row.status == '0' ? '启售' : '停售' }}
             </el-button>
           </template>
         </el-table-column>
       </el-table>
-      <Empty v-else
-             :is-search="isSearch" />
-      <el-pagination v-if="counts > 10"
-                     class="pageList"
-                     :page-sizes="[10, 20, 30, 40]"
-                     :page-size="pageSize"
-                     layout="total, sizes, prev, pager, next, jumper"
-                     :total="counts"
-                     @size-change="handleSizeChange"
-                     @current-change="handleCurrentChange" />
+      <Empty v-else :is-search="isSearch" />
+      <el-pagination v-if="counts > 10" class="pageList" :page-sizes="[10, 20, 30, 40]" :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper" :total="counts" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
   </div>
 </template>
@@ -268,7 +220,7 @@ export default class extends Vue {
           })
         }
       })
-      .catch(() => {})
+      .catch(() => { })
   }
 
   //状态更改
@@ -336,24 +288,28 @@ export default class extends Vue {
 .dashboard {
   &-container {
     margin: 30px;
+
     .container {
       background: #fff;
       position: relative;
       z-index: 1;
       padding: 30px 28px;
       border-radius: 4px;
+
       //查询黑色按钮样式
       .normal-btn {
         background: #333333;
         color: white;
         margin-left: 20px;
       }
+
       .tableBar {
         margin-bottom: 20px;
 
         .tableLab {
           display: inline-block;
           float: right;
+
           span {
             cursor: pointer;
             display: inline-block;
@@ -363,11 +319,13 @@ export default class extends Vue {
           }
         }
       }
+
       .tableBox {
         width: 100%;
         border: 1px solid $gray-5;
         border-bottom: 0;
       }
+
       .pageList {
         text-align: center;
         margin-top: 30px;

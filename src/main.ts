@@ -19,6 +19,7 @@ import router from '@/router'
 import '@/icons/components'
 import '@/permission'
 import { checkProcessEnv } from '@/utils/common'
+import dayjs from 'dayjs'
 
 Vue.use(ElementUI)
 Vue.use(VueAreaLinkage)
@@ -26,6 +27,11 @@ Vue.use(SvgIcon, {
   'tagName': 'svg-icon',
   'defaultWidth': '1em',
   'defaultHeight': '1em'
+})
+
+Vue.filter('formatDate', (value, format = 'YYYY-MM-DD HH:mm:ss') => {
+  if (!value) return ''
+  return dayjs(value).format(format)
 })
 
 Vue.config.productionTip = false
