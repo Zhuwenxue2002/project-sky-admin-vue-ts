@@ -1,0 +1,5 @@
+{
+    "typescript.validate.enable": false, // 关闭对 .ts 文件的验证
+    "javascript.validate.enable": false // 可选：同时关闭对 .js 文件的验证（如果需要）
+  }
+  
